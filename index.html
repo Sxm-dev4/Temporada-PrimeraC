@@ -30,6 +30,139 @@
             margin-bottom: 20px;
             font-style: italic;
         }
+
+        /* Sistema de Usuario */
+        .user-system {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .admin-system {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .user-login {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .user-input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            min-width: 200px;
+        }
+        .login-btn, .admin-btn {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .admin-btn {
+            background: linear-gradient(135deg, #e17055, #d63031);
+        }
+        .login-btn:hover, .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .user-welcome {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* Panel de Administrador */
+        .admin-panel {
+            display: none;
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .admin-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .admin-section {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .admin-section h4 {
+            margin: 0 0 10px 0;
+            color: white;
+        }
+
+        /* Sistema de Votaciones */
+        .voting-section {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .voting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .vote-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .vote-item {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .vote-btn {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .vote-btn:hover {
+            transform: translateY(-1px);
+        }
+        .vote-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .status-indicator {
             text-align: center;
             padding: 10px;
@@ -52,6 +185,7 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -80,6 +214,21 @@
         tr:hover {
             background-color: #e8f4f8;
         }
+        .my-row {
+            background-color: #e8f5e8 !important;
+            border: 2px solid #27ae60;
+        }
+        .my-row:hover {
+            background-color: #d4edda !important;
+        }
+        .admin-row {
+            background-color: #ffe8e8 !important;
+            border: 2px solid #e74c3c;
+        }
+        .admin-row:hover {
+            background-color: #ffdddd !important;
+        }
+
         input[type="text"], input[type="number"] {
             width: 100%;
             padding: 4px;
@@ -88,6 +237,11 @@
             box-sizing: border-box;
             font-size: 11px;
         }
+        input:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
         .updating {
             background-color: #fff3cd !important;
             transition: background-color 0.3s ease;
@@ -125,6 +279,7 @@
             font-weight: bold;
             font-size: 14px;
         }
+
         .add-row-btn, .download-btn {
             padding: 10px 20px;
             border: none;
@@ -150,6 +305,7 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
+
         .stats-summary {
             margin-top: 20px;
             padding: 20px;
@@ -180,6 +336,7 @@
         .penalty-explanation h4 {
             color: #e74c3c;
         }
+
         .legend {
             display: flex;
             gap: 10px;
@@ -200,6 +357,7 @@
             border-left: 3px solid #e74c3c;
             background-color: #ffebee;
         }
+
         .delete-btn {
             background: #e74c3c;
             color: white;
@@ -212,6 +370,11 @@
         .delete-btn:hover {
             background: #c0392b;
         }
+        .delete-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .loading {
             text-align: center;
             padding: 40px;
@@ -229,16 +392,132 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .vote-progress {
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 8px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+        .vote-bar {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .admin-stat {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .admin-stat h4 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .admin-stat p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏆  Temporada Primera C </h1>
-        <p class="subtitle">Tabla de estadisticas en tiempo realp>
+        <h1>🏆 Temporada Primera C</h1>
+        <p class="subtitle">Tabla de estadisticas en tiempo real</p>
+        
+        <!-- Sistema de Usuario -->
+        <div class="user-system">
+            <div id="login-form" class="user-login">
+                <input type="text" id="username" class="user-input" placeholder="Ingresa tu nombre">
+                <button class="login-btn" onclick="loginUser()">🚀 Unirse</button>
+                <button class="admin-btn" onclick="loginAsAdmin()">👑 Soy Admin</button>
+            </div>
+            <div id="user-welcome" style="display: none;">
+                <div class="user-welcome">
+                    <span id="user-role"></span> <span id="current-user"></span>!
+                    <button class="logout-btn" onclick="logoutUser()">Salir</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Administrador -->
+        <div id="admin-panel" class="admin-panel">
+            <h3>👑 Panel de Administrador</h3>
+            <div class="admin-stats">
+                <div class="admin-stat">
+                    <h4 id="total-players">0</h4>
+                    <p>Participantes</p>
+                </div>
+                <div class="admin-stat">
+                    <h4 id="total-votes">0</h4>
+                    <p>Votos</p>
+                </div>
+                <div class="admin-stat">
+                    <h4 id="leader-name">-</h4>
+                    <p>Líder</p>
+                </div>
+                <div class="admin-stat">
+                    <h4 id="avg-score">0</h4>
+                    <p>Promedio</p>
+                </div>
+            </div>
+            
+            <div class="admin-controls">
+                <div class="admin-section">
+                    <h4>🎮 Control de Competencia</h4>
+                    <button class="admin-btn" onclick="addDemoPlayers()">👥 Agregar Jugadores Demo</button>
+                    <button class="admin-btn" onclick="resetSeason()">🔄 Nueva Temporada</button>
+                    <button class="admin-btn" onclick="clearVotes()">🗳️ Limpiar Votos</button>
+                </div>
+                
+                <div class="admin-section">
+                    <h4>📊 Reportes</h4>
+                    <button class="admin-btn" onclick="downloadDetailedReport()">📋 Reporte Completo</button>
+                    <button class="admin-btn" onclick="downloadVotingReport()">🗳️ Reporte Votaciones</button>
+                    <button class="admin-btn" onclick="showPlayerActivity()">📈 Actividad</button>
+                </div>
+                
+                <div class="admin-section">
+                    <h4>⚙️ Configuración</h4>
+                    <button class="admin-btn" onclick="freezeCompetition()">❄️ Congelar/Descongelar</button>
+                    <button class="admin-btn" onclick="announceWinner()">🏆 Anunciar Ganador</button>
+                    <button class="admin-btn" onclick="backupData()">💾 Respaldar Datos</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sistema de Votaciones -->
+        <div id="voting-section" class="voting-section" style="display: none;">
+            <div class="voting-header">
+                <h3>🗳️ ¡Vota por el Balón de Oro!</h3>
+                <div>
+                    <button class="vote-btn" onclick="toggleVoting()" id="voting-toggle">📊 Ver Resultados</button>
+                </div>
+            </div>
+            
+            <div id="voting-area">
+                <p><strong>¿Quién crees que merece ganar el Balón de Oro?</strong></p>
+                <div id="voting-options"></div>
+                <p id="vote-status" style="margin-top: 10px;"></p>
+            </div>
+
+            <div id="vote-results-area" style="display: none;">
+                <h4>📊 Resultados de la Votación:</h4>
+                <div id="vote-results" class="vote-results"></div>
+            </div>
+        </div>
         
         <!-- Indicador de estado -->
         <div id="status-indicator" class="status-indicator status-loading">
-            <div class="spinner"></div> Conectando con Firebase...
+            <div class="spinner"></div> Conectando...
         </div>
         
         <div class="legend">
@@ -246,6 +525,8 @@
             <div class="legend-item candidato-alto">⭐ Alto Candidato (60-79)</div>
             <div class="legend-item candidato-medio">🔶 Candidato Medio (40-59)</div>
             <div class="legend-item candidato-bajo">🔻 Candidato Bajo (<40)</div>
+            <div class="legend-item" style="background-color: #27ae60; color: white;">💚 Tu Fila</div>
+            <div class="legend-item" style="background-color: #e74c3c; color: white;">👑 Admin</div>
         </div>
 
         <div class="scrollable-table">
@@ -278,7 +559,7 @@
                     <tr>
                         <td colspan="15" class="loading">
                             <div class="spinner"></div>
-                            Cargando datos...
+                            Cargando competencia...
                         </td>
                     </tr>
                 </tbody>
@@ -286,31 +567,29 @@
         </div>
 
         <div>
-            <button class="add-row-btn" onclick="addNewPlayer()">➕ Agregar Jugador</button>
             <button class="download-btn" onclick="downloadCSV()">📥 Descargar CSV</button>
             <button class="download-btn" onclick="printTable()">🖨️ Imprimir</button>
-            <button class="download-btn" onclick="clearAllData()" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">🗑️ Limpiar Todo</button>
         </div>
 
         <div class="formula-explanation">
-            <h4>🧮 Fórmula del Índice Balón de Oro (Puntos Base)</h4>
+            <h4>🧮 Fórmula del Índice Balón de Oro</h4>
             <p><strong>Puntos Base = (Goles × 0.8) + (Asistencias × 0.6) + (MVP × 1.2) + (Goles Finales × 3) + (Goles Puskas × 2.5) + (Consistencia × 2) + (Impacto × 1.5)</strong></p>
         </div>
 
         <div class="penalty-explanation">
             <h4>⚠️ Sistema de Penalizaciones</h4>
-            <p><strong>Penalización Total = (Tarjetas Amarillas × 0.4) + (Tarjetas Rojas × 5) + (Offsides × 0.15)</strong></p>
+            <p><strong>Penalización = (Tarjetas Amarillas × 0.4) + (Tarjetas Rojas × 5) + (Offsides × 0.15)</strong></p>
             <p><strong>🏆 Índice Final = Puntos Base - Penalizaciones</strong></p>
         </div>
 
         <div class="stats-summary">
-            <h3>📊 Ranking de Candidatos</h3>
+            <h3>📊 Ranking de la Competencia</h3>
             <div id="ranking">Cargando ranking...</div>
             <div style="margin-top: 15px;">
-                <p><strong>🏆 Favorito al Balón de Oro:</strong> <span id="favorito">-</span></p>
+                <p><strong>🏆 Líder actual:</strong> <span id="favorito">-</span></p>
                 <p><strong>📈 Promedio del Top 3:</strong> <span id="promedioTop3">0.00</span></p>
-                <p><strong>⚠️ Jugador más penalizado:</strong> <span id="masPenalizado">-</span></p>
-                <p><strong>✨ Jugador más limpio:</strong> <span id="masLimpio">-</span></p>
+                <p><strong>⚠️ Más penalizado:</strong> <span id="masPenalizado">-</span></p>
+                <p><strong>✨ Más limpio:</strong> <span id="masLimpio">-</span></p>
             </div>
         </div>
     </div>
@@ -320,39 +599,47 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 
     <script>
-        // 🔧 CONFIGURACIÓN AUTOMÁTICA DE FIREBASE
-        // TODO: Reemplazar con la Database URL real después de crear Realtime Database
+        // 🔧 CONFIGURACIÓN
         const firebaseConfig = {
             apiKey: "AIzaSyD27juR3l0TdLGsqwvjuw05Qwj0d4pdn8NW",
             authDomain: "temporada-primerac.firebaseapp.com",
-            databaseURL: "https://temporada-primerac-default-rtdb.firebaseio.com/", // ⚠️ CAMBIAR POR LA URL REAL
+            databaseURL: "https://temporada-primerac-default-rtdb.firebaseio.com/",
             projectId: "temporada-primerac"
         };
 
+        // Variables globales
         let db = null;
         let playersRef = null;
+        let votesRef = null;
         let isFirebaseConnected = false;
         let updateTimeout = null;
+        let currentUser = null;
+        let isAdmin = false;
+        let showingVoteResults = false;
+        let competitionFrozen = false;
 
-        // Inicializar Firebase automáticamente
+        // 🔥 FIREBASE
         function initializeFirebase() {
             try {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
                 playersRef = db.ref('players');
+                votesRef = db.ref('votes');
+                configRef = db.ref('config');
                 
-                // Escuchar cambios en tiempo real
+                // Listeners
                 playersRef.on('value', (snapshot) => {
                     const data = snapshot.val();
-                    if (data) {
-                        renderPlayersFromFirebase(data);
-                    } else {
-                        // Si no hay datos, crear datos iniciales
-                        loadInitialData();
-                    }
+                    renderPlayersFromFirebase(data || {});
+                    updateAdminStats(data || {});
                 });
 
-                // Manejar errores de conexión
+                votesRef.on('value', (snapshot) => {
+                    const votes = snapshot.val();
+                    updateVotingResults(votes || {});
+                    updateAdminStats(null, votes || {});
+                });
+
                 db.ref('.info/connected').on('value', (snapshot) => {
                     if (snapshot.val() === true) {
                         updateStatusIndicator('connected');
@@ -368,78 +655,291 @@
             }
         }
 
+        // 👑 SISTEMA DE ADMINISTRADOR
+        function loginAsAdmin() {
+            const password = prompt('🔐 Contraseña de administrador:');
+            if (password === 'admin123') { // Cambia esta contraseña
+                currentUser = 'ADMIN';
+                isAdmin = true;
+                localStorage.setItem('ballonDorUser', 'ADMIN');
+                localStorage.setItem('isAdmin', 'true');
+                
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('user-welcome').style.display = 'block';
+                document.getElementById('user-role').textContent = '👑 Admin';
+                document.getElementById('current-user').textContent = '';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('voting-section').style.display = 'block';
+            } else {
+                alert('❌ Contraseña incorrecta');
+            }
+        }
+
+        function loginUser() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                alert('⚠️ Por favor ingresa tu nombre');
+                return;
+            }
+
+            currentUser = username;
+            isAdmin = false;
+            localStorage.setItem('ballonDorUser', username);
+            localStorage.setItem('isAdmin', 'false');
+            
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('user-welcome').style.display = 'block';
+            document.getElementById('user-role').textContent = '👋 ¡Hola,';
+            document.getElementById('current-user').textContent = username;
+            document.getElementById('voting-section').style.display = 'block';
+
+            ensureUserExists(username);
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            isAdmin = false;
+            localStorage.removeItem('ballonDorUser');
+            localStorage.removeItem('isAdmin');
+            
+            document.getElementById('login-form').style.display = 'flex';
+            document.getElementById('user-welcome').style.display = 'none';
+            document.getElementById('voting-section').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('username').value = '';
+        }
+
+        // 🎮 FUNCIONES DE ADMINISTRADOR
+        function addDemoPlayers() {
+            if (!isAdmin || !isFirebaseConnected) return;
+            
+            const demoPlayers = {
+                'demo_messi': {
+                    nombre: 'Lionel Messi (Demo)',
+                    goles: 35, asistencias: 12, mvp: 15, golesFinal: 3,
+                    golesPuskas: 4, consistencia: 9, impacto: 10,
+                    amarillas: 5, rojas: 0, offsides: 8
+                },
+                'demo_haaland': {
+                    nombre: 'Erling Haaland (Demo)',
+                    goles: 42, asistencias: 8, mvp: 12, golesFinal: 2,
+                    golesPuskas: 2, consistencia: 8, impacto: 8,
+                    amarillas: 3, rojas: 0, offsides: 12
+                },
+                'demo_mbappe': {
+                    nombre: 'Kylian Mbappé (Demo)',
+                    goles: 38, asistencias: 10, mvp: 14, golesFinal: 4,
+                    golesPuskas: 3, consistencia: 8, impacto: 9,
+                    amarillas: 4, rojas: 0, offsides: 15
+                }
+            };
+            
+            Object.entries(demoPlayers).forEach(([id, player]) => {
+                playersRef.child(id).set(player);
+            });
+            
+            alert('✅ Jugadores demo agregados');
+        }
+
+        function resetSeason() {
+            if (!isAdmin) return;
+            
+            if (confirm('⚠️ ¿Nueva temporada? Esto borrará TODO.')) {
+                if (confirm('⚠️ ÚLTIMA CONFIRMACIÓN: Se perderán todos los datos.')) {
+                    playersRef.remove();
+                    votesRef.remove();
+                    alert('🔄 Nueva temporada iniciada');
+                }
+            }
+        }
+
+        function clearVotes() {
+            if (!isAdmin) return;
+            
+            if (confirm('¿Limpiar todas las votaciones?')) {
+                votesRef.remove();
+                alert('🗳️ Votaciones limpiadas');
+            }
+        }
+
+        function freezeCompetition() {
+                    if (!isAdmin) return;
+                    
+                    competitionFrozen = !competitionFrozen;
+                    alert(competitionFrozen ? '❄️ Competencia congelada' : '🔥 Competencia descongelada');
+                }
+
+        function announceWinner() {
+            if (!isAdmin) return;
+            
+            const rows = document.querySelectorAll('#tableBody tr');
+            let winner = null;
+            let highestScore = -1;
+            
+            rows.forEach(row => {
+                const nameCell = row.querySelector('td');
+                const scoreCell = row.querySelector('.final-score');
+                if (nameCell && scoreCell) {
+                    const score = parseFloat(scoreCell.textContent);
+                    if (score > highestScore) {
+                        highestScore = score;
+                        winner = nameCell.textContent.replace(' (TÚ)', '').replace(' (ADMIN)', '').trim();
+                    }
+                }
+            });
+            
+            if (winner) {
+                alert(`🏆 ¡GANADOR DEL BALÓN DE ORO! 🏆\n\n${winner} con ${highestScore} puntos\n\n¡Felicidades!`);
+            }
+        }
+
+        function downloadDetailedReport() {
+            if (!isAdmin) return;
+            
+            const rows = document.querySelectorAll('#tableBody tr');
+            let csvContent = 'REPORTE DETALLADO DEL BALÓN DE ORO\n';
+            csvContent += 'Fecha: ' + new Date().toLocaleDateString() + '\n\n';
+            csvContent += 'Jugador,Goles,Asistencias,MVP,Goles Finales,Goles Puskas,Consistencia,Impacto,Tarjetas Amarillas,Tarjetas Rojas,Offsides,Puntos Base,Penalización,Índice Final\n';
+            
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const cells = row.querySelectorAll('td');
+                if (inputs.length > 0) {
+                    const data = [];
+                    data.push(cells[0].textContent.replace(' (TÚ)', '').replace(' (ADMIN)', '').trim());
+                    inputs.forEach(input => data.push(input.value || '0'));
+                    data.push(cells[11].textContent, cells[12].textContent, cells[13].textContent);
+                    csvContent += `"${data[0]}",${data.slice(1).join(',')}\n`;
+                }
+            });
+            
+            downloadFile(csvContent, 'reporte_detallado_balon_oro.csv');
+        }
+
+        function downloadVotingReport() {
+            if (!isAdmin) return;
+            
+            votesRef.once('value').then((snapshot) => {
+                const votes = snapshot.val() || {};
+                let csvContent = 'REPORTE DE VOTACIONES\n';
+                csvContent += 'Fecha: ' + new Date().toLocaleDateString() + '\n\n';
+                csvContent += 'Votante,Voto Por,Fecha del Voto\n';
+                
+                Object.entries(votes).forEach(([voter, vote]) => {
+                    const date = new Date(vote.timestamp).toLocaleString();
+                    csvContent += `"${voter}","${vote.playerName}","${date}"\n`;
+                });
+                
+                downloadFile(csvContent, 'reporte_votaciones.csv');
+            });
+        }
+
+        function showPlayerActivity() {
+            if (!isAdmin) return;
+            alert('📈 Funcionalidad de actividad en desarrollo');
+        }
+
+        function backupData() {
+            if (!isAdmin) return;
+            
+            Promise.all([
+                playersRef.once('value'),
+                votesRef.once('value')
+            ]).then(([playersSnapshot, votesSnapshot]) => {
+                const backup = {
+                    fecha: new Date().toISOString(),
+                    players: playersSnapshot.val() || {},
+                    votes: votesSnapshot.val() || {}
+                };
+                
+                downloadFile(JSON.stringify(backup, null, 2), `backup_balon_oro_${new Date().toISOString().split('T')[0]}.json`);
+                alert('💾 Backup creado exitosamente');
+            });
+        }
+
+        function downloadFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 📊 ESTADÍSTICAS DE ADMIN
+        function updateAdminStats(playersData, votesData) {
+            if (!isAdmin) return;
+            
+            if (playersData) {
+                const players = Object.values(playersData);
+                document.getElementById('total-players').textContent = players.length;
+                
+                if (players.length > 0) {
+                    const scores = players.map(p => {
+                        const base = calculateBalonOro(p.goles, p.asistencias, p.mvp, p.golesFinal, p.golesPuskas, p.consistencia, p.impacto);
+                        const penalty = calculatePenalties(p.amarillas, p.rojas, p.offsides);
+                        return base - penalty;
+                    });
+                    
+                    const avgScore = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+                    document.getElementById('avg-score').textContent = avgScore;
+                    
+                    const leader = players.reduce((prev, current) => {
+                        const prevScore = calculateBalonOro(prev.goles, prev.asistencias, prev.mvp, prev.golesFinal, prev.golesPuskas, prev.consistencia, prev.impacto) - calculatePenalties(prev.amarillas, prev.rojas, prev.offsides);
+                        const currentScore = calculateBalonOro(current.goles, current.asistencias, current.mvp, current.golesFinal, current.golesPuskas, current.consistencia, current.impacto) - calculatePenalties(current.amarillas, current.rojas, current.offsides);
+                        return prevScore > currentScore ? prev : current;
+                    });
+                    document.getElementById('leader-name').textContent = leader.nombre.split(' ')[0];
+                }
+            }
+            
+            if (votesData) {
+                document.getElementById('total-votes').textContent = Object.keys(votesData).length;
+            }
+        }
+
+        // 👥 SISTEMA DE USUARIOS
+        function ensureUserExists(username) {
+            if (!isFirebaseConnected) return;
+            
+            const playerId = username.replace(/[.#$[\]]/g, '_');
+            playersRef.child(playerId).once('value').then((snapshot) => {
+                if (!snapshot.exists()) {
+                    const newPlayer = {
+                        nombre: username,
+                        goles: 0, asistencias: 0, mvp: 0, golesFinal: 0,
+                        golesPuskas: 0, consistencia: 5, impacto: 5,
+                        amarillas: 0, rojas: 0, offsides: 0,
+                        createdAt: Date.now()
+                    };
+                    playersRef.child(playerId).set(newPlayer);
+                }
+            });
+        }
+
         function updateStatusIndicator(status) {
             const indicator = document.getElementById('status-indicator');
             
             switch(status) {
                 case 'connected':
                     indicator.className = 'status-indicator status-connected';
-                    indicator.innerHTML = '✅ Conectado - Sincronización en tiempo real activa';
+                    indicator.innerHTML = '✅ Conectado - Sistema en tiempo real activo';
                     break;
                 case 'disconnected':
                     indicator.className = 'status-indicator status-error';
-                    indicator.innerHTML = '⚠️ Desconectado - Reintentando conexión...';
+                    indicator.innerHTML = '⚠️ Desconectado - Reintentando...';
                     break;
                 case 'error':
                     indicator.className = 'status-indicator status-error';
-                    indicator.innerHTML = '❌ Error de conexión - Verifica tu internet';
+                    indicator.innerHTML = '❌ Error de conexión';
                     break;
                 default:
                     indicator.className = 'status-indicator status-loading';
                     indicator.innerHTML = '<div class="spinner"></div> Conectando...';
             }
-        }
-
-        function loadInitialData() {
-            if (!isFirebaseConnected) return;
-            
-            playersRef.once('value').then((snapshot) => {
-                if (!snapshot.exists()) {
-                    // Crear datos iniciales
-                    const initialPlayers = {
-                        player1: {
-                            nombre: "Lionel Messi",
-                            goles: 35,
-                            asistencias: 12,
-                            mvp: 15,
-                            golesFinal: 3,
-                            golesPuskas: 4,
-                            consistencia: 9,
-                            impacto: 10,
-                            amarillas: 5,
-                            rojas: 0,
-                            offsides: 8
-                        },
-                        player2: {
-                            nombre: "Erling Haaland",
-                            goles: 42,
-                            asistencias: 8,
-                            mvp: 12,
-                            golesFinal: 2,
-                            golesPuskas: 2,
-                            consistencia: 8,
-                            impacto: 8,
-                            amarillas: 3,
-                            rojas: 0,
-                            offsides: 12
-                        },
-                        player3: {
-                            nombre: "Kylian Mbappé",
-                            goles: 38,
-                            asistencias: 10,
-                            mvp: 14,
-                            golesFinal: 4,
-                            golesPuskas: 3,
-                            consistencia: 8,
-                            impacto: 9,
-                            amarillas: 4,
-                            rojas: 0,
-                            offsides: 15
-                        }
-                    };
-                    playersRef.set(initialPlayers);
-                }
-            });
         }
 
         function renderPlayersFromFirebase(data) {
@@ -453,6 +953,7 @@
             });
             
             updateRanking();
+            updateVotingOptions();
         }
 
         function createPlayerRow(playerId, player) {
@@ -467,90 +968,206 @@
             const penalizaciones = calculatePenalties(player.amarillas, player.rojas, player.offsides);
             const indiceFinal = Math.round((puntosBase - penalizaciones) * 10) / 10;
             
+            // Verificar tipo de usuario
+            const isCurrentUser = currentUser && player.nombre === currentUser && !isAdmin;
+            const isAdminRow = isAdmin && currentUser === 'ADMIN';
+            
+            if (isCurrentUser) {
+                row.classList.add('my-row');
+            } else if (isAdminRow) {
+                row.classList.add('admin-row');
+            }
+
+            // Permisos de edición
+            const canEdit = isCurrentUser || isAdmin;
+            const inputDisabled = canEdit && !competitionFrozen ? '' : 'disabled';
+            
+            let userLabel = '';
+            if (isCurrentUser) userLabel = ' (TÚ)';
+            else if (isAdmin && player.nombre.includes('(Demo)')) userLabel = '';
+            else if (isAdminRow) userLabel = ' (ADMIN)';
+            
             row.innerHTML = `
-                <td><input type="text" value="${player.nombre}" onchange="updatePlayer('${playerId}', 'nombre', this.value)"></td>
-                <td><input type="number" min="0" value="${player.goles}" onchange="updatePlayer('${playerId}', 'goles', this.value)"></td>
-                <td><input type="number" min="0" value="${player.asistencias}" onchange="updatePlayer('${playerId}', 'asistencias', this.value)"></td>
-                <td><input type="number" min="0" value="${player.mvp}" onchange="updatePlayer('${playerId}', 'mvp', this.value)"></td>
-                <td><input type="number" min="0" value="${player.golesFinal}" onchange="updatePlayer('${playerId}', 'golesFinal', this.value)"></td>
-                <td><input type="number" min="0" value="${player.golesPuskas}" onchange="updatePlayer('${playerId}', 'golesPuskas', this.value)"></td>
-                <td><input type="number" min="1" max="10" value="${player.consistencia}" onchange="updatePlayer('${playerId}', 'consistencia', this.value)"></td>
-                <td><input type="number" min="1" max="10" value="${player.impacto}" onchange="updatePlayer('${playerId}', 'impacto', this.value)"></td>
-                <td class="section-divider"><input type="number" min="0" value="${player.amarillas}" onchange="updatePlayer('${playerId}', 'amarillas', this.value)"></td>
-                <td><input type="number" min="0" value="${player.rojas}" onchange="updatePlayer('${playerId}', 'rojas', this.value)"></td>
-                <td><input type="number" min="0" value="${player.offsides}" onchange="updatePlayer('${playerId}', 'offsides', this.value)"></td>
+                <td><strong>${player.nombre}${userLabel}</strong></td>
+                <td><input type="number" min="0" value="${player.goles}" onchange="updatePlayer('${playerId}', 'goles', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="0" value="${player.asistencias}" onchange="updatePlayer('${playerId}', 'asistencias', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="0" value="${player.mvp}" onchange="updatePlayer('${playerId}', 'mvp', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="0" value="${player.golesFinal}" onchange="updatePlayer('${playerId}', 'golesFinal', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="0" value="${player.golesPuskas}" onchange="updatePlayer('${playerId}', 'golesPuskas', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="1" max="10" value="${player.consistencia}" onchange="updatePlayer('${playerId}', 'consistencia', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="1" max="10" value="${player.impacto}" onchange="updatePlayer('${playerId}', 'impacto', this.value)" ${inputDisabled}></td>
+                <td class="section-divider"><input type="number" min="0" value="${player.amarillas}" onchange="updatePlayer('${playerId}', 'amarillas', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="0" value="${player.rojas}" onchange="updatePlayer('${playerId}', 'rojas', this.value)" ${inputDisabled}></td>
+                <td><input type="number" min="0" value="${player.offsides}" onchange="updatePlayer('${playerId}', 'offsides', this.value)" ${inputDisabled}></td>
                 <td class="promedio">${puntosBase}</td>
                 <td class="penalty-score">-${penalizaciones}</td>
                 <td class="final-score ${getClassByScore(indiceFinal)}">${indiceFinal}</td>
-                <td><button class="delete-btn" onclick="deletePlayer('${playerId}')">🗑️</button></td>
+                <td>${(isCurrentUser || isAdmin) ? `<button class="delete-btn" onclick="deletePlayer('${playerId}')">🗑️</button>` : '-'}</td>
             `;
             
             return row;
         }
 
         function updatePlayer(playerId, field, value) {
-            if (!isFirebaseConnected) return;
+            if (!isFirebaseConnected || competitionFrozen) return;
             
-            // Mostrar indicador visual de actualización
+            // Verificar permisos
+            if (!isAdmin) {
+                playersRef.child(playerId).once('value').then((snapshot) => {
+                    const player = snapshot.val();
+                    if (player && player.nombre !== currentUser) {
+                        alert('⚠️ Solo puedes editar tus propias estadísticas');
+                        return;
+                    }
+                });
+            }
+            
             const row = document.getElementById(playerId);
             if (row) {
                 row.classList.add('updating');
                 
-                // Debounce las actualizaciones
                 clearTimeout(updateTimeout);
                 updateTimeout = setTimeout(() => {
-                    playersRef.child(playerId).child(field).set(field === 'nombre' ? value : parseFloat(value) || 0);
+                    playersRef.child(playerId).child(field).set(parseFloat(value) || 0);
                     row.classList.remove('updating');
                 }, 500);
             }
         }
 
-        function addNewPlayer() {
-            if (!isFirebaseConnected) return;
-            
-            const playerId = 'player_' + Date.now();
-            const newPlayer = {
-                nombre: "Nuevo Jugador",
-                goles: 0,
-                asistencias: 0,
-                mvp: 0,
-                golesFinal: 0,
-                golesPuskas: 0,
-                consistencia: 5,
-                impacto: 5,
-                amarillas: 0,
-                rojas: 0,
-                offsides: 0
-            };
-
-            playersRef.child(playerId).set(newPlayer);
-        }
-
         function deletePlayer(playerId) {
             if (!isFirebaseConnected) return;
             
-            if (confirm('¿Estás seguro de que quieres eliminar este jugador?')) {
+            let confirmMsg = '';
+            if (isAdmin) {
+                confirmMsg = '¿Eliminar este jugador de la competencia?';
+            } else {
+                confirmMsg = '¿Salir de la competencia? Se borrarán tus estadísticas.';
+            }
+            
+            if (confirm(confirmMsg)) {
                 playersRef.child(playerId).remove();
+                votesRef.child(playerId).remove();
+                
+                if (!isAdmin) {
+                    logoutUser();
+                }
             }
         }
 
-        function clearAllData() {
-            if (!isFirebaseConnected) return;
+        // 🗳️ SISTEMA DE VOTACIONES
+        function updateVotingOptions() {
+            const votingOptions = document.getElementById('voting-options');
+            if (!votingOptions) return;
+
+            const rows = document.querySelectorAll('#tableBody tr');
+            let optionsHTML = '';
+
+            rows.forEach(row => {
+                const nameCell = row.querySelector('td');
+                if (nameCell) {
+                    const playerName = nameCell.textContent.replace(' (TÚ)', '').replace(' (ADMIN)', '').trim();
+                    const playerId = row.id;
+                    if (playerName !== '') {
+                        optionsHTML += `<button class="vote-btn" onclick="voteForPlayer('${playerId}', '${playerName}')">${playerName}</button>`;
+                    }
+                }
+            });
+
+            votingOptions.innerHTML = optionsHTML;
+        }
+
+        function voteForPlayer(playerId, playerName) {
+            if (!currentUser || !isFirebaseConnected) {
+                alert('⚠️ Necesitas estar logueado para votar');
+                return;
+            }
+
+            const voterId = currentUser === 'ADMIN' ? 'ADMIN' : currentUser.replace(/[.#$[\]]/g, '_');
             
-            if (confirm('¿Estás seguro de que quieres borrar todos los datos?')) {
-                playersRef.remove();
+            votesRef.child(voterId).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    if (confirm('Ya has votado. ¿Cambiar tu voto?')) {
+                        votesRef.child(voterId).set({
+                            votedFor: playerId,
+                            playerName: playerName,
+                            timestamp: Date.now()
+                        });
+                        document.getElementById('vote-status').innerHTML = `✅ Has votado por <strong>${playerName}</strong>`;
+                    }
+                } else {
+                    votesRef.child(voterId).set({
+                        votedFor: playerId,
+                        playerName: playerName,
+                        timestamp: Date.now()
+                    });
+                    document.getElementById('vote-status').innerHTML = `✅ Has votado por <strong>${playerName}</strong>`;
+                }
+            });
+        }
+
+        function updateVotingResults(votes) {
+            const voteResults = document.getElementById('vote-results');
+            if (!voteResults) return;
+
+            const voteCounts = {};
+            const totalVotes = Object.keys(votes).length;
+
+            Object.values(votes).forEach(vote => {
+                const playerName = vote.playerName;
+                voteCounts[playerName] = (voteCounts[playerName] || 0) + 1;
+            });
+
+            let resultsHTML = '';
+            Object.entries(voteCounts)
+                .sort(([,a], [,b]) => b - a)
+                .forEach(([playerName, count]) => {
+                    const percentage = totalVotes > 0 ? ((count / totalVotes) * 100).toFixed(1) : 0;
+                    resultsHTML += `
+                        <div class="vote-item">
+                            <strong>${playerName}</strong><br>
+                            ${count} votos (${percentage}%)
+                            <div class="vote-progress">
+                                <div class="vote-bar" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            voteResults.innerHTML = resultsHTML || '<p>Aún no hay votos</p>';
+
+            if (currentUser) {
+                const voterId = currentUser === 'ADMIN' ? 'ADMIN' : currentUser.replace(/[.#$[\]]/g, '_');
+                const userVote = votes[voterId];
+                if (userVote) {
+                    document.getElementById('vote-status').innerHTML = `✅ Has votado por <strong>${userVote.playerName}</strong>`;
+                } else {
+                    document.getElementById('vote-status').innerHTML = '🗳️ Aún no has votado';
+                }
             }
         }
 
+        function toggleVoting() {
+            const votingArea = document.getElementById('voting-area');
+            const resultsArea = document.getElementById('vote-results-area');
+            const toggleBtn = document.getElementById('voting-toggle');
+
+            if (showingVoteResults) {
+                votingArea.style.display = 'block';
+                resultsArea.style.display = 'none';
+                toggleBtn.textContent = '📊 Ver Resultados';
+                showingVoteResults = false;
+            } else {
+                votingArea.style.display = 'none';
+                resultsArea.style.display = 'block';
+                toggleBtn.textContent = '🗳️ Votar';
+                showingVoteResults = true;
+            }
+        }
+
+        // 🧮 CÁLCULOS
         function calculateBalonOro(goles, asistencias, mvp, golesFinal, golesPuskas, consistencia, impacto) {
-            const puntosBase = (goles * 0.8) + 
-                              (asistencias * 0.6) + 
-                              (mvp * 1.2) + 
-                              (golesFinal * 3) + 
-                              (golesPuskas * 2.5) +
-                              (consistencia * 2) + 
-                              (impacto * 1.5);
-            
+            const puntosBase = (goles * 0.8) + (asistencias * 0.6) + (mvp * 1.2) + 
+                              (golesFinal * 3) + (golesPuskas * 2.5) + (consistencia * 2) + (impacto * 1.5);
             return Math.round(puntosBase * 10) / 10;
         }
 
@@ -571,12 +1188,12 @@
             const candidatos = [];
             
             rows.forEach(row => {
-                const nombreInput = row.querySelector('input[type="text"]');
+                const nameCell = row.querySelector('td');
                 const finalScoreCell = row.querySelector('.final-score');
-                if (nombreInput && finalScoreCell) {
-                    const nombre = nombreInput.value;
+                if (nameCell && finalScoreCell) {
+                    const nombre = nameCell.textContent.replace(' (TÚ)', '').replace(' (ADMIN)', '').trim();
                     const finalScore = parseFloat(finalScoreCell.textContent);
-                    if (nombre.trim() !== '') {
+                    if (nombre !== '') {
                         candidatos.push({ nombre, indiceFinal: finalScore });
                     }
                 }
@@ -589,13 +1206,15 @@
             
             candidatos.slice(0, 10).forEach((candidato, index) => {
                 const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-                rankingHTML += `<li><strong>${medal} ${candidato.nombre}</strong> - ${candidato.indiceFinal} pts</li>`;
+                const isCurrentUserInRanking = (currentUser && candidato.nombre === currentUser) || 
+                                               (isAdmin && candidato.nombre.includes('Demo'));
+                const highlight = isCurrentUserInRanking ? ' style="background-color: #e8f5e8; padding: 5px; border-radius: 5px;"' : '';
+                rankingHTML += `<li${highlight}><strong>${medal} ${candidato.nombre}</strong> - ${candidato.indiceFinal} pts</li>`;
             });
             
             rankingHTML += '</ol>';
             rankingDiv.innerHTML = rankingHTML;
             
-            // Actualizar estadísticas especiales
             if (candidatos.length > 0) {
                 document.getElementById('favorito').textContent = `${candidatos[0].nombre} (${candidatos[0].indiceFinal} pts)`;
                 
@@ -604,7 +1223,6 @@
                     (top3.reduce((sum, c) => sum + c.indiceFinal, 0) / top3.length).toFixed(1) : '0.0';
                 document.getElementById('promedioTop3').textContent = promedioTop3 + ' pts';
                 
-                // Jugador más penalizado y más limpio
                 if (candidatos.length > 1) {
                     document.getElementById('masPenalizado').textContent = candidatos[candidatos.length - 1].nombre;
                     document.getElementById('masLimpio').textContent = candidatos[0].nombre;
@@ -612,6 +1230,7 @@
             }
         }
 
+        // 📁 UTILIDADES
         function downloadCSV() {
             const rows = document.querySelectorAll('#tableBody tr');
             let csvContent = 'Jugador,Goles,Asistencias,MVP,Goles Finales,Goles Puskas,Consistencia,Impacto,Tarjetas Amarillas,Tarjetas Rojas,Offsides,Puntos Base,Penalización,Índice Final\n';
@@ -621,40 +1240,36 @@
                 const cells = row.querySelectorAll('td');
                 if (inputs.length > 0) {
                     const data = [];
-                    
-                    // Obtener valores de inputs
-                    inputs.forEach(input => {
-                        data.push(input.value || '0');
-                    });
-                    
-                    // Agregar puntos calculados
-                    data.push(cells[11].textContent); // Puntos base
-                    data.push(cells[12].textContent); // Penalización
-                    data.push(cells[13].textContent); // Índice final
-                    
+                    data.push(cells[0].textContent.replace(' (TÚ)', '').replace(' (ADMIN)', '').trim());
+                    inputs.forEach(input => data.push(input.value || '0'));
+                    data.push(cells[11].textContent, cells[12].textContent, cells[13].textContent);
                     csvContent += `"${data[0]}",${data.slice(1).join(',')}\n`;
                 }
             });
             
-            const blob = new Blob([csvContent], { type: 'text/csv;charset-utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'candidatos_balon_oro_tiempo_real.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            downloadFile(csvContent, 'competencia_balon_oro.csv');
         }
 
         function printTable() {
             window.print();
         }
 
-        // 🚀 INICIALIZAR AUTOMÁTICAMENTE AL CARGAR LA PÁGINA
+        // 🚀 INICIALIZACIÓN
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏆 Inicializando Calculadora del Balón de Oro...');
+            console.log('🏆 Iniciando Sistema Completo del Balón de Oro...');
             initializeFirebase();
+            
+            const savedUser = localStorage.getItem('ballonDorUser');
+            const savedAdmin = localStorage.getItem('isAdmin') === 'true';
+            
+            if (savedUser) {
+                document.getElementById('username').value = savedUser;
+                if (savedAdmin) {
+                    loginAsAdmin();
+                } else {
+                    loginUser();
+                }
+            }
         });
     </script>
 </body>
