@@ -42,7 +42,12 @@
             color: #155724;
             border: 1px solid #c3e6cb;
         }
-        .status-disconnected {
+        .status-loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status-error {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
@@ -195,39 +200,6 @@
             border-left: 3px solid #e74c3c;
             background-color: #ffebee;
         }
-        .firebase-setup {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 5px solid #e17055;
-        }
-        .firebase-setup h3 {
-            color: #d63031;
-            margin-top: 0;
-        }
-        .config-input {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-        .setup-btn {
-            background: linear-gradient(135deg, #00b894, #00a085);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .setup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
         .delete-btn {
             background: #e74c3c;
             color: white;
@@ -240,37 +212,33 @@
         .delete-btn:hover {
             background: #c0392b;
         }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏆 Temporada Primera C</h1>
-        <p class="subtitle">Tabla de estadisticas en tiempo real</p>
-        
-        <!-- Configuración de Firebase -->
-        <div id="firebase-setup" class="firebase-setup">
-            <h3>🔧 Configuración de Firebase</h3>
-            <p><strong>Para activar el tiempo real, sigue estos pasos:</strong></p>
-            <ol>
-                <li>Ve a <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></li>
-                <li>Crea un nuevo proyecto (gratis)</li>
-                <li>Agrega una aplicación web</li>
-                <li>Habilita "Realtime Database" en modo de prueba</li>
-                <li>Copia la configuración aquí:</li>
-            </ol>
-            
-            <input type="text" id="apiKey" class="config-input" placeholder="API Key (ej: AIzaSyD27juR3l0TdLGsqwvjuw05Qwj0d4pdn8NW)">
-            <input type="text" id="authDomain" class="config-input" placeholder="Auth Domain (ej: tu-proyecto.firebaseapp.com)">
-            <input type="text" id="databaseURL" class="config-input" placeholder="Database URL (ej: https://tu-proyecto-default-rtdb.firebaseio.com/)">
-            <input type="text" id="projectId" class="config-input" placeholder="Project ID (ej: tu-proyecto)">
-            
-            <button class="setup-btn" onclick="setupFirebase()">🚀 Conectar Firebase</button>
-            <button class="setup-btn" onclick="useLocalMode()">💾 Usar Modo Local (Sin tiempo real)</button>
-        </div>
+        <h1>🏆  Temporada Primera C </h1>
+        <p class="subtitle">Tabla de estadisticas en tiempo realp>
         
         <!-- Indicador de estado -->
-        <div id="status-indicator" class="status-indicator status-disconnected">
-            ⚠️ Modo Local - Los datos no se sincronizan en tiempo real
+        <div id="status-indicator" class="status-indicator status-loading">
+            <div class="spinner"></div> Conectando con Firebase...
         </div>
         
         <div class="legend">
@@ -307,7 +275,12 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <!-- Los datos se cargarán dinámicamente -->
+                    <tr>
+                        <td colspan="15" class="loading">
+                            <div class="spinner"></div>
+                            Cargando datos...
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -332,7 +305,7 @@
 
         <div class="stats-summary">
             <h3>📊 Ranking de Candidatos</h3>
-            <div id="ranking"></div>
+            <div id="ranking">Cargando ranking...</div>
             <div style="margin-top: 15px;">
                 <p><strong>🏆 Favorito al Balón de Oro:</strong> <span id="favorito">-</span></p>
                 <p><strong>📈 Promedio del Top 3:</strong> <span id="promedioTop3">0.00</span></p>
@@ -347,30 +320,22 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 
     <script>
+        // 🔧 CONFIGURACIÓN AUTOMÁTICA DE FIREBASE
+        // TODO: Reemplazar con la Database URL real después de crear Realtime Database
+        const firebaseConfig = {
+            apiKey: "AIzaSyD27juR3l0TdLGsqwvjuw05Qwj0d4pdn8NW",
+            authDomain: "temporada-primerac.firebaseapp.com",
+            databaseURL: "https://temporada-primerac-default-rtdb.firebaseio.com/", // ⚠️ CAMBIAR POR LA URL REAL
+            projectId: "temporada-primerac"
+        };
+
         let db = null;
         let playersRef = null;
         let isFirebaseConnected = false;
         let updateTimeout = null;
 
-        // Configuración de Firebase
-        function setupFirebase() {
-            const apiKey = document.getElementById('apiKey').value;
-            const authDomain = document.getElementById('authDomain').value;
-            const databaseURL = document.getElementById('databaseURL').value;
-            const projectId = document.getElementById('projectId').value;
-
-            if (!apiKey || !authDomain || !databaseURL || !projectId) {
-                alert('⚠️ Por favor completa todos los campos de configuración');
-                return;
-            }
-
-            const firebaseConfig = {
-                apiKey: apiKey,
-                authDomain: authDomain,
-                databaseURL: databaseURL,
-                projectId: projectId
-            };
-
+        // Inicializar Firebase automáticamente
+        function initializeFirebase() {
             try {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
@@ -387,30 +352,41 @@
                     }
                 });
 
-                isFirebaseConnected = true;
-                document.getElementById('firebase-setup').style.display = 'none';
-                updateStatusIndicator(true);
+                // Manejar errores de conexión
+                db.ref('.info/connected').on('value', (snapshot) => {
+                    if (snapshot.val() === true) {
+                        updateStatusIndicator('connected');
+                        isFirebaseConnected = true;
+                    } else {
+                        updateStatusIndicator('disconnected');
+                    }
+                });
                 
             } catch (error) {
                 console.error('Error conectando Firebase:', error);
-                alert('❌ Error conectando Firebase. Verifica la configuración.');
+                updateStatusIndicator('error');
             }
         }
 
-        function useLocalMode() {
-            document.getElementById('firebase-setup').style.display = 'none';
-            updateStatusIndicator(false);
-            loadInitialDataLocal();
-        }
-
-        function updateStatusIndicator(connected) {
+        function updateStatusIndicator(status) {
             const indicator = document.getElementById('status-indicator');
-            if (connected) {
-                indicator.className = 'status-indicator status-connected';
-                indicator.innerHTML = '✅ Conectado - Sincronización en tiempo real activa';
-            } else {
-                indicator.className = 'status-indicator status-disconnected';
-                indicator.innerHTML = '⚠️ Modo Local - Los datos no se sincronizan en tiempo real';
+            
+            switch(status) {
+                case 'connected':
+                    indicator.className = 'status-indicator status-connected';
+                    indicator.innerHTML = '✅ Conectado - Sincronización en tiempo real activa';
+                    break;
+                case 'disconnected':
+                    indicator.className = 'status-indicator status-error';
+                    indicator.innerHTML = '⚠️ Desconectado - Reintentando conexión...';
+                    break;
+                case 'error':
+                    indicator.className = 'status-indicator status-error';
+                    indicator.innerHTML = '❌ Error de conexión - Verifica tu internet';
+                    break;
+                default:
+                    indicator.className = 'status-indicator status-loading';
+                    indicator.innerHTML = '<div class="spinner"></div> Conectando...';
             }
         }
 
@@ -446,53 +422,24 @@
                             amarillas: 3,
                             rojas: 0,
                             offsides: 12
+                        },
+                        player3: {
+                            nombre: "Kylian Mbappé",
+                            goles: 38,
+                            asistencias: 10,
+                            mvp: 14,
+                            golesFinal: 4,
+                            golesPuskas: 3,
+                            consistencia: 8,
+                            impacto: 9,
+                            amarillas: 4,
+                            rojas: 0,
+                            offsides: 15
                         }
                     };
                     playersRef.set(initialPlayers);
                 }
             });
-        }
-
-        function loadInitialDataLocal() {
-            const savedData = localStorage.getItem('balonOroData');
-            if (savedData) {
-                const players = JSON.parse(savedData);
-                renderPlayersFromLocal(players);
-            } else {
-                // Datos iniciales para modo local
-                const initialPlayers = [
-                    {
-                        id: 'player1',
-                        nombre: "Lionel Messi",
-                        goles: 35,
-                        asistencias: 12,
-                        mvp: 15,
-                        golesFinal: 3,
-                        golesPuskas: 4,
-                        consistencia: 9,
-                        impacto: 10,
-                        amarillas: 5,
-                        rojas: 0,
-                        offsides: 8
-                    },
-                    {
-                        id: 'player2',
-                        nombre: "Erling Haaland",
-                        goles: 42,
-                        asistencias: 8,
-                        mvp: 12,
-                        golesFinal: 2,
-                        golesPuskas: 2,
-                        consistencia: 8,
-                        impacto: 8,
-                        amarillas: 3,
-                        rojas: 0,
-                        offsides: 12
-                    }
-                ];
-                renderPlayersFromLocal(initialPlayers);
-                saveToLocal(initialPlayers);
-            }
         }
 
         function renderPlayersFromFirebase(data) {
@@ -501,26 +448,14 @@
             
             Object.keys(data).forEach(playerId => {
                 const player = data[playerId];
-                const row = createPlayerRow(playerId, player, true);
+                const row = createPlayerRow(playerId, player);
                 tbody.appendChild(row);
             });
             
             updateRanking();
         }
 
-        function renderPlayersFromLocal(players) {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            
-            players.forEach(player => {
-                const row = createPlayerRow(player.id, player, false);
-                tbody.appendChild(row);
-            });
-            
-            updateRanking();
-        }
-
-        function createPlayerRow(playerId, player, isFirebase) {
+        function createPlayerRow(playerId, player) {
             const row = document.createElement('tr');
             row.id = playerId;
             
@@ -554,35 +489,28 @@
         }
 
         function updatePlayer(playerId, field, value) {
-            if (isFirebaseConnected) {
-                // Mostrar indicador visual de actualización
-                const row = document.getElementById(playerId);
-                if (row) {
-                    row.classList.add('updating');
-                    
-                    // Debounce las actualizaciones
-                    clearTimeout(updateTimeout);
-                    updateTimeout = setTimeout(() => {
-                        playersRef.child(playerId).child(field).set(field === 'nombre' ? value : parseFloat(value) || 0);
-                        row.classList.remove('updating');
-                    }, 500);
-                }
-            } else {
-                // Modo local
-                const players = JSON.parse(localStorage.getItem('balonOroData') || '[]');
-                const playerIndex = players.findIndex(p => p.id === playerId);
-                if (playerIndex !== -1) {
-                    players[playerIndex][field] = field === 'nombre' ? value : parseFloat(value) || 0;
-                    saveToLocal(players);
-                    renderPlayersFromLocal(players);
-                }
+            if (!isFirebaseConnected) return;
+            
+            // Mostrar indicador visual de actualización
+            const row = document.getElementById(playerId);
+            if (row) {
+                row.classList.add('updating');
+                
+                // Debounce las actualizaciones
+                clearTimeout(updateTimeout);
+                updateTimeout = setTimeout(() => {
+                    playersRef.child(playerId).child(field).set(field === 'nombre' ? value : parseFloat(value) || 0);
+                    row.classList.remove('updating');
+                }, 500);
             }
         }
 
         function addNewPlayer() {
+            if (!isFirebaseConnected) return;
+            
             const playerId = 'player_' + Date.now();
             const newPlayer = {
-                nombre: "",
+                nombre: "Nuevo Jugador",
                 goles: 0,
                 asistencias: 0,
                 mvp: 0,
@@ -595,42 +523,23 @@
                 offsides: 0
             };
 
-            if (isFirebaseConnected) {
-                playersRef.child(playerId).set(newPlayer);
-            } else {
-                const players = JSON.parse(localStorage.getItem('balonOroData') || '[]');
-                players.push({id: playerId, ...newPlayer});
-                saveToLocal(players);
-                renderPlayersFromLocal(players);
-            }
+            playersRef.child(playerId).set(newPlayer);
         }
 
         function deletePlayer(playerId) {
+            if (!isFirebaseConnected) return;
+            
             if (confirm('¿Estás seguro de que quieres eliminar este jugador?')) {
-                if (isFirebaseConnected) {
-                    playersRef.child(playerId).remove();
-                } else {
-                    const players = JSON.parse(localStorage.getItem('balonOroData') || '[]');
-                    const filteredPlayers = players.filter(p => p.id !== playerId);
-                    saveToLocal(filteredPlayers);
-                    renderPlayersFromLocal(filteredPlayers);
-                }
+                playersRef.child(playerId).remove();
             }
         }
 
         function clearAllData() {
+            if (!isFirebaseConnected) return;
+            
             if (confirm('¿Estás seguro de que quieres borrar todos los datos?')) {
-                if (isFirebaseConnected) {
-                    playersRef.remove();
-                } else {
-                    localStorage.removeItem('balonOroData');
-                    renderPlayersFromLocal([]);
-                }
+                playersRef.remove();
             }
-        }
-
-        function saveToLocal(players) {
-            localStorage.setItem('balonOroData', JSON.stringify(players));
         }
 
         function calculateBalonOro(goles, asistencias, mvp, golesFinal, golesPuskas, consistencia, impacto) {
@@ -695,7 +604,7 @@
                     (top3.reduce((sum, c) => sum + c.indiceFinal, 0) / top3.length).toFixed(1) : '0.0';
                 document.getElementById('promedioTop3').textContent = promedioTop3 + ' pts';
                 
-                 // Jugador más penalizado y más limpio
+                // Jugador más penalizado y más limpio
                 if (candidatos.length > 1) {
                     document.getElementById('masPenalizado').textContent = candidatos[candidatos.length - 1].nombre;
                     document.getElementById('masLimpio').textContent = candidatos[0].nombre;
@@ -710,22 +619,24 @@
             rows.forEach(row => {
                 const inputs = row.querySelectorAll('input');
                 const cells = row.querySelectorAll('td');
-                const data = [];
-                
-                // Obtener valores de inputs
-                inputs.forEach(input => {
-                    data.push(input.value || '0');
-                });
-                
-                // Agregar puntos calculados
-                data.push(cells[11].textContent); // Puntos base
-                data.push(cells[12].textContent); // Penalización
-                data.push(cells[13].textContent); // Índice final
-                
-                csvContent += `"${data[0]}",${data.slice(1).join(',')}\n`;
+                if (inputs.length > 0) {
+                    const data = [];
+                    
+                    // Obtener valores de inputs
+                    inputs.forEach(input => {
+                        data.push(input.value || '0');
+                    });
+                    
+                    // Agregar puntos calculados
+                    data.push(cells[11].textContent); // Puntos base
+                    data.push(cells[12].textContent); // Penalización
+                    data.push(cells[13].textContent); // Índice final
+                    
+                    csvContent += `"${data[0]}",${data.slice(1).join(',')}\n`;
+                }
             });
             
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset-utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
@@ -740,10 +651,10 @@
             window.print();
         }
 
-        // Inicializar la aplicación
+        // 🚀 INICIALIZAR AUTOMÁTICAMENTE AL CARGAR LA PÁGINA
         document.addEventListener('DOMContentLoaded', function() {
-            // La aplicación se inicializa cuando el usuario elige Firebase o modo local
-            console.log('🏆 Calculadora del Balón de Oro cargada');
+            console.log('🏆 Inicializando Calculadora del Balón de Oro...');
+            initializeFirebase();
         });
     </script>
 </body>
