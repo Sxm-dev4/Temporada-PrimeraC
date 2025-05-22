@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Balón de Oro - Sistema Completo</title>
+    <title>Calculadora Balón de Oro - Tiempo Real</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,8 +27,25 @@
         .subtitle {
             text-align: center;
             color: #7f8c8d;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-style: italic;
+        }
+        .status-indicator {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .status-connected {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
         table {
             width: 100%;
@@ -65,6 +82,10 @@
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 11px;
+        }
+        .updating {
+            background-color: #fff3cd !important;
+            transition: background-color 0.3s ease;
         }
         .promedio {
             background-color: #e8f5e8;
@@ -174,12 +195,83 @@
             border-left: 3px solid #e74c3c;
             background-color: #ffebee;
         }
+        .firebase-setup {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #e17055;
+        }
+        .firebase-setup h3 {
+            color: #d63031;
+            margin-top: 0;
+        }
+        .config-input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .setup-btn {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .setup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .delete-btn:hover {
+            background: #c0392b;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏆  Tabla de temporada - Sistema Completo</h1>
-        <p class="subtitle">Estadísticas de rendimiento </p>
+        <h1>🏆 Calculadora del Balón de Oro - Tiempo Real</h1>
+        <p class="subtitle">Sincronización automática entre todos los usuarios</p>
+        
+        <!-- Configuración de Firebase -->
+        <div id="firebase-setup" class="firebase-setup">
+            <h3>🔧 Configuración de Firebase</h3>
+            <p><strong>Para activar el tiempo real, sigue estos pasos:</strong></p>
+            <ol>
+                <li>Ve a <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></li>
+                <li>Crea un nuevo proyecto (gratis)</li>
+                <li>Agrega una aplicación web</li>
+                <li>Habilita "Realtime Database" en modo de prueba</li>
+                <li>Copia la configuración aquí:</li>
+            </ol>
+            
+            <input type="text" id="apiKey" class="config-input" placeholder="API Key (ej: AIzaSyD27juR3l0TdLGsqwvjuw05Qwj0d4pdn8NW)">
+            <input type="text" id="authDomain" class="config-input" placeholder="Auth Domain (ej: tu-proyecto.firebaseapp.com)">
+            <input type="text" id="databaseURL" class="config-input" placeholder="Database URL (ej: https://tu-proyecto-default-rtdb.firebaseio.com/)">
+            <input type="text" id="projectId" class="config-input" placeholder="Project ID (ej: tu-proyecto)">
+            
+            <button class="setup-btn" onclick="setupFirebase()">🚀 Conectar Firebase</button>
+            <button class="setup-btn" onclick="useLocalMode()">💾 Usar Modo Local (Sin tiempo real)</button>
+        </div>
+        
+        <!-- Indicador de estado -->
+        <div id="status-indicator" class="status-indicator status-disconnected">
+            ⚠️ Modo Local - Los datos no se sincronizan en tiempo real
+        </div>
         
         <div class="legend">
             <div class="legend-item balon-oro">🏆 Candidato Principal (80+)</div>
@@ -196,6 +288,7 @@
                         <th colspan="7" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">📈 ESTADÍSTICAS POSITIVAS</th>
                         <th colspan="3" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">📉 PENALIZACIONES</th>
                         <th colspan="3" style="background: linear-gradient(135deg, #9c27b0, #673ab7);">🏆 RESULTADOS</th>
+                        <th rowspan="2">Acciones</th>
                     </tr>
                     <tr>
                         <th>Goles</th>
@@ -213,63 +306,17 @@
                         <th>🏆 Índice Final</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" placeholder="Ej: Lionel Messi" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="35" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="12" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="15" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="3" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="4" onchange="updateStats()"></td>
-                        <td><input type="number" min="1" max="10" value="9" onchange="updateStats()"></td>
-                        <td><input type="number" min="1" max="10" value="10" onchange="updateStats()"></td>
-                        <td class="section-divider"><input type="number" min="0" value="5" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="8" onchange="updateStats()"></td>
-                        <td class="promedio">89.7</td>
-                        <td class="penalty-score">-2.6</td>
-                        <td class="final-score">87.1</td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="Ej: Erling Haaland" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="42" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="8" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="12" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="2" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="2" onchange="updateStats()"></td>
-                        <td><input type="number" min="1" max="10" value="8" onchange="updateStats()"></td>
-                        <td><input type="number" min="1" max="10" value="8" onchange="updateStats()"></td>
-                        <td class="section-divider"><input type="number" min="0" value="3" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="12" onchange="updateStats()"></td>
-                        <td class="promedio">64.8</td>
-                        <td class="penalty-score">-2.1</td>
-                        <td class="final-score">62.7</td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="Ej: Sergio Ramos" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="8" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="3" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="6" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="2" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="1" onchange="updateStats()"></td>
-                        <td><input type="number" min="1" max="10" value="7" onchange="updateStats()"></td>
-                        <td><input type="number" min="1" max="10" value="9" onchange="updateStats()"></td>
-                        <td class="section-divider"><input type="number" min="0" value="15" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="2" onchange="updateStats()"></td>
-                        <td><input type="number" min="0" value="3" onchange="updateStats()"></td>
-                        <td class="promedio">45.1</td>
-                        <td class="penalty-score">-13.5</td>
-                        <td class="final-score">31.6</td>
-                    </tr>
+                <tbody id="tableBody">
+                    <!-- Los datos se cargarán dinámicamente -->
                 </tbody>
             </table>
         </div>
 
         <div>
-            <button class="add-row-btn" onclick="addRow()">➕ Agregar Jugador</button>
+            <button class="add-row-btn" onclick="addNewPlayer()">➕ Agregar Jugador</button>
             <button class="download-btn" onclick="downloadCSV()">📥 Descargar CSV</button>
             <button class="download-btn" onclick="printTable()">🖨️ Imprimir</button>
+            <button class="download-btn" onclick="clearAllData()" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">🗑️ Limpiar Todo</button>
         </div>
 
         <div class="formula-explanation">
@@ -280,14 +327,6 @@
         <div class="penalty-explanation">
             <h4>⚠️ Sistema de Penalizaciones</h4>
             <p><strong>Penalización Total = (Tarjetas Amarillas × 0.4) + (Tarjetas Rojas × 5) + (Offsides × 0.15)</strong></p>
-            
-            <p><strong>Justificación de las penalizaciones:</strong></p>
-            <ul>
-                <li><strong>Tarjetas Amarillas:</strong> -0.4 puntos c/u - Indisciplina menor</li>
-                <li><strong>Tarjetas Rojas:</strong> -5 puntos c/u - Indisciplina grave que afecta al equipo</li>
-                <li><strong>Offsides:</strong> -0.15 puntos c/u - Falta de concentración/timing</li>
-            </ul>
-            
             <p><strong>🏆 Índice Final = Puntos Base - Penalizaciones</strong></p>
         </div>
 
@@ -303,9 +342,298 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
     <script>
+        let db = null;
+        let playersRef = null;
+        let isFirebaseConnected = false;
+        let updateTimeout = null;
+
+        // Configuración de Firebase
+        function setupFirebase() {
+            const apiKey = document.getElementById('apiKey').value;
+            const authDomain = document.getElementById('authDomain').value;
+            const databaseURL = document.getElementById('databaseURL').value;
+            const projectId = document.getElementById('projectId').value;
+
+            if (!apiKey || !authDomain || !databaseURL || !projectId) {
+                alert('⚠️ Por favor completa todos los campos de configuración');
+                return;
+            }
+
+            const firebaseConfig = {
+                apiKey: apiKey,
+                authDomain: authDomain,
+                databaseURL: databaseURL,
+                projectId: projectId
+            };
+
+            try {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                playersRef = db.ref('players');
+                
+                // Escuchar cambios en tiempo real
+                playersRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        renderPlayersFromFirebase(data);
+                    } else {
+                        // Si no hay datos, crear datos iniciales
+                        loadInitialData();
+                    }
+                });
+
+                isFirebaseConnected = true;
+                document.getElementById('firebase-setup').style.display = 'none';
+                updateStatusIndicator(true);
+                
+            } catch (error) {
+                console.error('Error conectando Firebase:', error);
+                alert('❌ Error conectando Firebase. Verifica la configuración.');
+            }
+        }
+
+        function useLocalMode() {
+            document.getElementById('firebase-setup').style.display = 'none';
+            updateStatusIndicator(false);
+            loadInitialDataLocal();
+        }
+
+        function updateStatusIndicator(connected) {
+            const indicator = document.getElementById('status-indicator');
+            if (connected) {
+                indicator.className = 'status-indicator status-connected';
+                indicator.innerHTML = '✅ Conectado - Sincronización en tiempo real activa';
+            } else {
+                indicator.className = 'status-indicator status-disconnected';
+                indicator.innerHTML = '⚠️ Modo Local - Los datos no se sincronizan en tiempo real';
+            }
+        }
+
+        function loadInitialData() {
+            if (!isFirebaseConnected) return;
+            
+            playersRef.once('value').then((snapshot) => {
+                if (!snapshot.exists()) {
+                    // Crear datos iniciales
+                    const initialPlayers = {
+                        player1: {
+                            nombre: "Lionel Messi",
+                            goles: 35,
+                            asistencias: 12,
+                            mvp: 15,
+                            golesFinal: 3,
+                            golesPuskas: 4,
+                            consistencia: 9,
+                            impacto: 10,
+                            amarillas: 5,
+                            rojas: 0,
+                            offsides: 8
+                        },
+                        player2: {
+                            nombre: "Erling Haaland",
+                            goles: 42,
+                            asistencias: 8,
+                            mvp: 12,
+                            golesFinal: 2,
+                            golesPuskas: 2,
+                            consistencia: 8,
+                            impacto: 8,
+                            amarillas: 3,
+                            rojas: 0,
+                            offsides: 12
+                        }
+                    };
+                    playersRef.set(initialPlayers);
+                }
+            });
+        }
+
+        function loadInitialDataLocal() {
+            const savedData = localStorage.getItem('balonOroData');
+            if (savedData) {
+                const players = JSON.parse(savedData);
+                renderPlayersFromLocal(players);
+            } else {
+                // Datos iniciales para modo local
+                const initialPlayers = [
+                    {
+                        id: 'player1',
+                        nombre: "Lionel Messi",
+                        goles: 35,
+                        asistencias: 12,
+                        mvp: 15,
+                        golesFinal: 3,
+                        golesPuskas: 4,
+                        consistencia: 9,
+                        impacto: 10,
+                        amarillas: 5,
+                        rojas: 0,
+                        offsides: 8
+                    },
+                    {
+                        id: 'player2',
+                        nombre: "Erling Haaland",
+                        goles: 42,
+                        asistencias: 8,
+                        mvp: 12,
+                        golesFinal: 2,
+                        golesPuskas: 2,
+                        consistencia: 8,
+                        impacto: 8,
+                        amarillas: 3,
+                        rojas: 0,
+                        offsides: 12
+                    }
+                ];
+                renderPlayersFromLocal(initialPlayers);
+                saveToLocal(initialPlayers);
+            }
+        }
+
+        function renderPlayersFromFirebase(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            Object.keys(data).forEach(playerId => {
+                const player = data[playerId];
+                const row = createPlayerRow(playerId, player, true);
+                tbody.appendChild(row);
+            });
+            
+            updateRanking();
+        }
+
+        function renderPlayersFromLocal(players) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            players.forEach(player => {
+                const row = createPlayerRow(player.id, player, false);
+                tbody.appendChild(row);
+            });
+            
+            updateRanking();
+        }
+
+        function createPlayerRow(playerId, player, isFirebase) {
+            const row = document.createElement('tr');
+            row.id = playerId;
+            
+            const puntosBase = calculateBalonOro(
+                player.goles, player.asistencias, player.mvp, 
+                player.golesFinal, player.golesPuskas, 
+                player.consistencia, player.impacto
+            );
+            const penalizaciones = calculatePenalties(player.amarillas, player.rojas, player.offsides);
+            const indiceFinal = Math.round((puntosBase - penalizaciones) * 10) / 10;
+            
+            row.innerHTML = `
+                <td><input type="text" value="${player.nombre}" onchange="updatePlayer('${playerId}', 'nombre', this.value)"></td>
+                <td><input type="number" min="0" value="${player.goles}" onchange="updatePlayer('${playerId}', 'goles', this.value)"></td>
+                <td><input type="number" min="0" value="${player.asistencias}" onchange="updatePlayer('${playerId}', 'asistencias', this.value)"></td>
+                <td><input type="number" min="0" value="${player.mvp}" onchange="updatePlayer('${playerId}', 'mvp', this.value)"></td>
+                <td><input type="number" min="0" value="${player.golesFinal}" onchange="updatePlayer('${playerId}', 'golesFinal', this.value)"></td>
+                <td><input type="number" min="0" value="${player.golesPuskas}" onchange="updatePlayer('${playerId}', 'golesPuskas', this.value)"></td>
+                <td><input type="number" min="1" max="10" value="${player.consistencia}" onchange="updatePlayer('${playerId}', 'consistencia', this.value)"></td>
+                <td><input type="number" min="1" max="10" value="${player.impacto}" onchange="updatePlayer('${playerId}', 'impacto', this.value)"></td>
+                <td class="section-divider"><input type="number" min="0" value="${player.amarillas}" onchange="updatePlayer('${playerId}', 'amarillas', this.value)"></td>
+                <td><input type="number" min="0" value="${player.rojas}" onchange="updatePlayer('${playerId}', 'rojas', this.value)"></td>
+                <td><input type="number" min="0" value="${player.offsides}" onchange="updatePlayer('${playerId}', 'offsides', this.value)"></td>
+                <td class="promedio">${puntosBase}</td>
+                <td class="penalty-score">-${penalizaciones}</td>
+                <td class="final-score ${getClassByScore(indiceFinal)}">${indiceFinal}</td>
+                <td><button class="delete-btn" onclick="deletePlayer('${playerId}')">🗑️</button></td>
+            `;
+            
+            return row;
+        }
+
+        function updatePlayer(playerId, field, value) {
+            if (isFirebaseConnected) {
+                // Mostrar indicador visual de actualización
+                const row = document.getElementById(playerId);
+                if (row) {
+                    row.classList.add('updating');
+                    
+                    // Debounce las actualizaciones
+                    clearTimeout(updateTimeout);
+                    updateTimeout = setTimeout(() => {
+                        playersRef.child(playerId).child(field).set(field === 'nombre' ? value : parseFloat(value) || 0);
+                        row.classList.remove('updating');
+                    }, 500);
+                }
+            } else {
+                // Modo local
+                const players = JSON.parse(localStorage.getItem('balonOroData') || '[]');
+                const playerIndex = players.findIndex(p => p.id === playerId);
+                if (playerIndex !== -1) {
+                    players[playerIndex][field] = field === 'nombre' ? value : parseFloat(value) || 0;
+                    saveToLocal(players);
+                    renderPlayersFromLocal(players);
+                }
+            }
+        }
+
+        function addNewPlayer() {
+            const playerId = 'player_' + Date.now();
+            const newPlayer = {
+                nombre: "",
+                goles: 0,
+                asistencias: 0,
+                mvp: 0,
+                golesFinal: 0,
+                golesPuskas: 0,
+                consistencia: 5,
+                impacto: 5,
+                amarillas: 0,
+                rojas: 0,
+                offsides: 0
+            };
+
+            if (isFirebaseConnected) {
+                playersRef.child(playerId).set(newPlayer);
+            } else {
+                const players = JSON.parse(localStorage.getItem('balonOroData') || '[]');
+                players.push({id: playerId, ...newPlayer});
+                saveToLocal(players);
+                renderPlayersFromLocal(players);
+            }
+        }
+
+        function deletePlayer(playerId) {
+            if (confirm('¿Estás seguro de que quieres eliminar este jugador?')) {
+                if (isFirebaseConnected) {
+                    playersRef.child(playerId).remove();
+                } else {
+                    const players = JSON.parse(localStorage.getItem('balonOroData') || '[]');
+                    const filteredPlayers = players.filter(p => p.id !== playerId);
+                    saveToLocal(filteredPlayers);
+                    renderPlayersFromLocal(filteredPlayers);
+                }
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('¿Estás seguro de que quieres borrar todos los datos?')) {
+                if (isFirebaseConnected) {
+                    playersRef.remove();
+                } else {
+                    localStorage.removeItem('balonOroData');
+                    renderPlayersFromLocal([]);
+                }
+            }
+        }
+
+        function saveToLocal(players) {
+            localStorage.setItem('balonOroData', JSON.stringify(players));
+        }
+
         function calculateBalonOro(goles, asistencias, mvp, golesFinal, golesPuskas, consistencia, impacto) {
-            // Fórmula para puntos base (ahora incluye Goles Puskas)
             const puntosBase = (goles * 0.8) + 
                               (asistencias * 0.6) + 
                               (mvp * 1.2) + 
@@ -318,7 +646,6 @@
         }
 
         function calculatePenalties(amarillas, rojas, offsides) {
-            // Sistema de penalizaciones
             const penalizacion = (amarillas * 0.4) + (rojas * 5) + (offsides * 0.15);
             return Math.round(penalizacion * 10) / 10;
         }
@@ -330,56 +657,22 @@
             return 'candidato-bajo';
         }
 
-        function updateStats() {
-            const table = document.getElementById('statsTable');
-            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        function updateRanking() {
+            const rows = document.querySelectorAll('#tableBody tr');
             const candidatos = [];
             
-            for (let i = 0; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
-                const inputs = cells[0].getElementsByTagName('input');
-                
-                if (inputs.length === 0) continue;
-                
-                const nombre = cells[0].getElementsByTagName('input')[0].value || `Jugador ${i+1}`;
-                const goles = parseFloat(cells[1].getElementsByTagName('input')[0].value) || 0;
-                const asistencias = parseFloat(cells[2].getElementsByTagName('input')[0].value) || 0;
-                const mvp = parseFloat(cells[3].getElementsByTagName('input')[0].value) || 0;
-                const golesFinal = parseFloat(cells[4].getElementsByTagName('input')[0].value) || 0;
-                const golesPuskas = parseFloat(cells[5].getElementsByTagName('input')[0].value) || 0;
-                const consistencia = parseFloat(cells[6].getElementsByTagName('input')[0].value) || 5;
-                const impacto = parseFloat(cells[7].getElementsByTagName('input')[0].value) || 5;
-                const amarillas = parseFloat(cells[8].getElementsByTagName('input')[0].value) || 0;
-                const rojas = parseFloat(cells[9].getElementsByTagName('input')[0].value) || 0;
-                const offsides = parseFloat(cells[10].getElementsByTagName('input')[0].value) || 0;
-                
-                const puntosBase = calculateBalonOro(goles, asistencias, mvp, golesFinal, golesPuskas, consistencia, impacto);
-                const penalizaciones = calculatePenalties(amarillas, rojas, offsides);
-                const indiceFinal = Math.round((puntosBase - penalizaciones) * 10) / 10;
-                
-                // Actualizar celdas
-                cells[11].textContent = puntosBase;
-                cells[12].textContent = `-${penalizaciones}`;
-                cells[13].textContent = indiceFinal;
-                cells[13].className = `final-score ${getClassByScore(indiceFinal)}`;
-                
-                if (nombre.trim() !== '' && nombre !== `Jugador ${i+1}`) {
-                    candidatos.push({ 
-                        nombre, 
-                        indiceFinal, 
-                        puntosBase, 
-                        penalizaciones,
-                        amarillas,
-                        rojas,
-                        offsides
-                    });
+            rows.forEach(row => {
+                const nombreInput = row.querySelector('input[type="text"]');
+                const finalScoreCell = row.querySelector('.final-score');
+                if (nombreInput && finalScoreCell) {
+                    const nombre = nombreInput.value;
+                    const finalScore = parseFloat(finalScoreCell.textContent);
+                    if (nombre.trim() !== '') {
+                        candidatos.push({ nombre, indiceFinal: finalScore });
+                    }
                 }
-            }
+            });
             
-            updateRanking(candidatos);
-        }
-
-        function updateRanking(candidatos) {
             candidatos.sort((a, b) => b.indiceFinal - a.indiceFinal);
             
             const rankingDiv = document.getElementById('ranking');
@@ -387,8 +680,7 @@
             
             candidatos.slice(0, 10).forEach((candidato, index) => {
                 const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-                const penaltyInfo = candidato.penalizaciones > 0 ? ` (Base: ${candidato.puntosBase}, -${candidato.penalizaciones})` : '';
-                rankingHTML += `<li><strong>${medal} ${candidato.nombre}</strong> - ${candidato.indiceFinal} pts${penaltyInfo}</li>`;
+                rankingHTML += `<li><strong>${medal} ${candidato.nombre}</strong> - ${candidato.indiceFinal} pts</li>`;
             });
             
             rankingHTML += '</ol>';
@@ -403,72 +695,41 @@
                     (top3.reduce((sum, c) => sum + c.indiceFinal, 0) / top3.length).toFixed(1) : '0.0';
                 document.getElementById('promedioTop3').textContent = promedioTop3 + ' pts';
                 
-                // Jugador más penalizado
-                const masPenalizado = candidatos.reduce((prev, current) => 
-                    (prev.penalizaciones > current.penalizaciones) ? prev : current);
-                document.getElementById('masPenalizado').textContent = 
-                    `${masPenalizado.nombre} (-${masPenalizado.penalizaciones} pts)`;
-                
-                // Jugador más limpio
-                const masLimpio = candidatos.reduce((prev, current) => 
-                    (prev.penalizaciones < current.penalizaciones) ? prev : current);
-                document.getElementById('masLimpio').textContent = 
-                    `${masLimpio.nombre} (-${masLimpio.penalizaciones} pts)`;
+                 // Jugador más penalizado y más limpio
+                if (candidatos.length > 1) {
+                    document.getElementById('masPenalizado').textContent = candidatos[candidatos.length - 1].nombre;
+                    document.getElementById('masLimpio').textContent = candidatos[0].nombre;
+                }
             }
-        }
-
-        function addRow() {
-            const table = document.getElementById('statsTable').getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow();
-            
-            newRow.innerHTML = `
-                <td><input type="text" placeholder="Nombre del jugador" onchange="updateStats()"></td>
-                <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td><input type="number" min="1" max="10" value="5" onchange="updateStats()"></td>
-                <td><input type="number" min="1" max="10" value="5" onchange="updateStats()"></td>
-                <td class="section-divider"><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td><input type="number" min="0" value="0" onchange="updateStats()"></td>
-                <td class="promedio">17.5</td>
-                <td class="penalty-score">-0.0</td>
-                <td class="final-score">17.5</td>
-            `;
-            updateStats();
         }
 
         function downloadCSV() {
-            const table = document.getElementById('statsTable');
-            const rows = table.rows;
-            let csvContent = '';
+            const rows = document.querySelectorAll('#tableBody tr');
+            let csvContent = 'Jugador,Goles,Asistencias,MVP,Goles Finales,Goles Puskas,Consistencia,Impacto,Tarjetas Amarillas,Tarjetas Rojas,Offsides,Puntos Base,Penalización,Índice Final\n';
             
-            // Headers
-            csvContent += 'Jugador,Goles,Asistencias,MVP,Goles Finales,Goles Puskas,Consistencia,Impacto,Tarjetas Amarillas,Tarjetas Rojas,Offsides,Puntos Base,Penalización,Índice Final\n';
-            
-            // Data rows
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].cells;
-                const datos = [];
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const cells = row.querySelectorAll('td');
+                const data = [];
                 
-                for (let j = 0; j < 11; j++) {
-                    const input = cells[j].getElementsByTagName('input')[0];
-                    datos.push(input ? (input.value || '0') : '0');
-                }
-                datos.push(cells[11].textContent);
-                datos.push(cells[12].textContent);
-                datos.push(cells[13].textContent);
+                // Obtener valores de inputs
+                inputs.forEach(input => {
+                    data.push(input.value || '0');
+                });
                 
-                csvContent += `"${datos[0]}",${datos.slice(1).join(',')}\n`;
-            }
+                // Agregar puntos calculados
+                data.push(cells[11].textContent); // Puntos base
+                data.push(cells[12].textContent); // Penalización
+                data.push(cells[13].textContent); // Índice final
+                
+                csvContent += `"${data[0]}",${data.slice(1).join(',')}\n`;
+            });
             
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', 'candidatos_balon_oro_completo.csv');
+            link.setAttribute('download', 'candidatos_balon_oro_tiempo_real.csv');
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
@@ -479,8 +740,11 @@
             window.print();
         }
 
-        // Inicializar
-        updateStats();
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // La aplicación se inicializa cuando el usuario elige Firebase o modo local
+            console.log('🏆 Calculadora del Balón de Oro cargada');
+        });
     </script>
 </body>
 </html>
