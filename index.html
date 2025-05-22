@@ -900,7 +900,7 @@
             <div class="legend-item legend-admin">👑 Administrador</div>
         </div>
 
-        <!-- Tabla Principal -->
+         <!-- Tabla Principal -->
         <div class="table-container">
             <div class="table-wrapper">
                 <table id="statsTable">
@@ -1374,18 +1374,43 @@
             }
         }
 
+        // 🔧 FUNCIÓN CORREGIDA PARA RENDERIZAR JUGADORES
         function renderPlayersFromFirebase(data) {
             const tbody = document.getElementById('tableBody');
+            if (!tbody) {
+                console.error('No se encontró el elemento tableBody');
+                return;
+            }
+            
             tbody.innerHTML = '';
             
-            Object.keys(data).forEach(playerId => {
-                const player = data[playerId];
-                const row = createPlayerRow(playerId, player);
-                tbody.appendChild(row);
-            });
+            const playersData = data || {};
+            const playerKeys = Object.keys(playersData);
             
-            updateRanking();
-            updateVotingOptions();
+            console.log('Renderizando jugadores:', playerKeys.length);
+            
+            if (playerKeys.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="16" style="text-align: center; padding: 40px; color: #a0aec0;">
+                            <p>No hay jugadores registrados</p>
+                            <p style="margin-top: 10px; font-size: 12px;">Únete a la competencia para comenzar</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                playerKeys.forEach(playerId => {
+                    const player = playersData[playerId];
+                    const row = createPlayerRow(playerId, player);
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Esperar un momento para que el DOM se actualice antes de calcular el ranking
+            setTimeout(() => {
+                updateRanking();
+                updateVotingOptions();
+            }, 100);
         }
 
         function createPlayerRow(playerId, player) {
@@ -1484,6 +1509,120 @@
                 if (!isAdmin) {
                     logoutUser();
                 }
+            }
+        }
+
+        // 🏆 FUNCIÓN CORREGIDA PARA ACTUALIZAR RANKING
+        function updateRanking() {
+            // Primero verificar si hay filas en la tabla
+            const rows = document.querySelectorAll('#tableBody tr');
+            const candidatos = [];
+            
+            // Debug: verificar cuántas filas encontramos
+            console.log('Filas encontradas:', rows.length);
+            
+            rows.forEach((row, index) => {
+                const nameCell = row.querySelector('.player-name');
+                const scoreCells = row.querySelectorAll('.score-cell');
+                
+                // Debug: verificar estructura de cada fila
+                console.log(`Fila ${index}:`, {
+                    nameCell: nameCell?.textContent,
+                    scoreCells: scoreCells.length
+                });
+                
+                // La última celda con clase score-cell debería ser el índice final
+                const finalScoreCell = scoreCells[scoreCells.length - 1];
+                
+                if (nameCell && finalScoreCell && nameCell.textContent.trim() !== '') {
+                    const nombre = nameCell.textContent.replace(' (TÚ)', '').replace(' (ADMIN)', '').trim();
+                    const finalScoreText = finalScoreCell.textContent.trim();
+                    const finalScore = parseFloat(finalScoreText);
+                    
+                    // Verificar que el score es un número válido
+                    if (!isNaN(finalScore) && nombre !== '') {
+                        candidatos.push({ nombre, indiceFinal: finalScore });
+                        console.log('Candidato agregado:', { nombre, indiceFinal: finalScore });
+                    }
+                }
+            });
+            
+            console.log('Total candidatos:', candidatos.length);
+            
+            // Ordenar por puntuación descendente
+            candidatos.sort((a, b) => b.indiceFinal - a.indiceFinal);
+            
+            const rankingList = document.getElementById('ranking-list');
+            if (!rankingList) {
+                console.error('No se encontró el elemento ranking-list');
+                return;
+            }
+            
+            let rankingHTML = '';
+            
+            if (candidatos.length === 0) {
+                rankingHTML = `
+                    <li class="ranking-item">
+                        <span class="ranking-position">-</span>
+                        <span class="ranking-player">No hay datos disponibles</span>
+                        <span class="ranking-score">-</span>
+                    </li>
+                `;
+            } else {
+                candidatos.slice(0, 10).forEach((candidato, index) => {
+                    const position = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}°`;
+                    const isCurrentUserInRanking = (currentUser && candidato.nombre === currentUser) || 
+                                                   (isAdmin && currentUser === 'ADMIN');
+                    const highlightClass = isCurrentUserInRanking ? 'highlighted' : '';
+                    
+                    rankingHTML += `
+                        <li class="ranking-item ${highlightClass}">
+                            <span class="ranking-position">${position}</span>
+                            <span class="ranking-player">${candidato.nombre}</span>
+                            <span class="ranking-score">${candidato.indiceFinal} pts</span>
+                        </li>
+                    `;
+                });
+            }
+            
+            rankingList.innerHTML = rankingHTML;
+            
+            // Actualizar estadísticas de resumen
+            updateSummaryStats(candidatos);
+        }
+
+        function updateSummaryStats(candidatos) {
+            // Actualizar estadísticas de resumen
+            const summaryLeader = document.getElementById('summary-leader');
+            const summaryAvgTop3 = document.getElementById('summary-avg-top3');
+            const summaryMostPenalized = document.getElementById('summary-most-penalized');
+            const summaryCleanest = document.getElementById('summary-cleanest');
+            
+            if (candidatos.length > 0) {
+                if (summaryLeader) {
+                    summaryLeader.textContent = `${candidatos[0].nombre} (${candidatos[0].indiceFinal})`;
+                }
+                
+                const top3 = candidatos.slice(0, 3);
+                if (summaryAvgTop3 && top3.length > 0) {
+                    const promedioTop3 = (top3.reduce((sum, c) => sum + c.indiceFinal, 0) / top3.length).toFixed(1);
+                    summaryAvgTop3.textContent = promedioTop3;
+                }
+                
+                if (candidatos.length > 1) {
+                    if (summaryMostPenalized) {
+                        summaryMostPenalized.textContent = candidatos[candidatos.length - 1].nombre;
+                    }
+                    if (summaryCleanest) {
+                        summaryCleanest.textContent = candidatos[0].nombre;
+                    }
+                }
+            } else {
+                // Si no hay candidatos, mostrar valores por defecto
+                if (summaryLeader) summaryLeader.textContent = '-';
+                if (summaryAvgTop3) summaryAvgTop3.textContent = '0.0';
+                if (summaryMostPenalized) summaryMostPenalized.textContent = '-';
+                if (summaryCleanest) summaryCleanest.textContent = '-';
             }
         }
 
@@ -1628,60 +1767,6 @@
             return 'score-poor';
         }
 
-        function updateRanking() {
-            const rows = document.querySelectorAll('#tableBody tr');
-            const candidatos = [];
-            
-            rows.forEach(row => {
-                const nameCell = row.querySelector('.player-name');
-                const finalScoreCell = row.querySelector('.score-cell:last-child');
-                if (nameCell && finalScoreCell) {
-                    const nombre = nameCell.textContent.replace(' (TÚ)', '').replace(' (ADMIN)', '').trim();
-                    const finalScore = parseFloat(finalScoreCell.textContent);
-                    if (nombre !== '') {
-                        candidatos.push({ nombre, indiceFinal: finalScore });
-                    }
-                }
-            });
-            
-            candidatos.sort((a, b) => b.indiceFinal - a.indiceFinal);
-            
-            const rankingList = document.getElementById('ranking-list');
-            let rankingHTML = '';
-            
-            candidatos.slice(0, 10).forEach((candidato, index) => {
-                const position = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}°`;
-                const isCurrentUserInRanking = (currentUser && candidato.nombre === currentUser) || 
-                                               (isAdmin && candidato.nombre.includes('Demo'));
-                const highlightClass = isCurrentUserInRanking ? 'highlighted' : '';
-                
-                rankingHTML += `
-                    <li class="ranking-item ${highlightClass}">
-                        <span class="ranking-position">${position}</span>
-                        <span class="ranking-player">${candidato.nombre}</span>
-                        <span class="ranking-score">${candidato.indiceFinal} pts</span>
-                    </li>
-                `;
-            });
-            
-            rankingList.innerHTML = rankingHTML || '<li class="ranking-item"><span class="ranking-player">No hay datos disponibles</span></li>';
-            
-            // Actualizar estadísticas de resumen
-            if (candidatos.length > 0) {
-                document.getElementById('summary-leader').textContent = `${candidatos[0].nombre} (${candidatos[0].indiceFinal})`;
-                
-                const top3 = candidatos.slice(0, 3);
-                const promedioTop3 = top3.length > 0 ? 
-                    (top3.reduce((sum, c) => sum + c.indiceFinal, 0) / top3.length).toFixed(1) : '0.0';
-                document.getElementById('summary-avg-top3').textContent = promedioTop3;
-                
-                if (candidatos.length > 1) {
-                    document.getElementById('summary-most-penalized').textContent = candidatos[candidatos.length - 1].nombre;
-                    document.getElementById('summary-cleanest').textContent = candidatos[0].nombre;
-                }
-            }
-        }
-
         // 📁 UTILIDADES
         function downloadCSV() {
             const rows = document.querySelectorAll('#tableBody tr');
@@ -1734,3 +1819,4 @@
         });
     </script>
 </body>
+</html>
